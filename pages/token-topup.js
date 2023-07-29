@@ -1,11 +1,11 @@
-import { withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { AppLayout } from '../components/AppLayout';
-import { getAppProps } from '../utils/getAppProps';
+import { withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { AppLayout } from "../components/AppLayout";
+import { getAppProps } from "../utils/getAppProps";
 
 export default function TokenTopup() {
   const handleClick = async () => {
     const result = await fetch(`/api/addTokens`, {
-      method: 'POST',
+      method: "POST",
     });
     const json = await result.json();
     // console.log('RESULT: ', json);
@@ -13,10 +13,14 @@ export default function TokenTopup() {
   };
 
   return (
-    <div>
-      <h1>this is the token topup</h1>
-      <button className="btn" onClick={handleClick}>
-        Add tokens
+    <div className="bg-white rounded-lg shadow-md p-6 ">
+      <h1 className="text-2xl font-semibold mb-4">Token Topup</h1>
+      <p className="text-gray-500 mb-6">Purchase tokens in order to create more language sets</p>
+      <button
+        className="btn text-white py-2 px-4 rounded-lg"
+        onClick={handleClick}
+      >
+        Add Tokens
       </button>
     </div>
   );
