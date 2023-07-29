@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/router";
 
 export default function Language() {
-  const [selectedLanguage, setSelectedLangauge] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("");
   const [topic, setTopic] = useState("");
   const [generating, setGenerating] = useState(false);
   const router = useRouter();
@@ -35,8 +35,8 @@ export default function Language() {
     { name: "Danish" },
   ];
 
-  const handleLanguageClick = (language) => {
-    setSelectedLangauge(language);
+  const handleLanguageChange = (e) => {
+    setSelectedLanguage(e.target.value);
   };
 
   const handleClick = async (e) => {
@@ -51,7 +51,6 @@ export default function Language() {
         body: JSON.stringify({ selectedLanguage, topic }),
       });
       const json = await response.json();
-      console.log("RESULT: ", json);
       if (json?.languageSetId) {
         router.push(`/language-set/${json.languageSetId}`);
       }
@@ -60,36 +59,56 @@ export default function Language() {
     }
   };
 
-  console.log({ selectedLanguage, topic });
   return (
-    <div>
+    <div className="container mx-auto px-4 py-4 sm:px-6 lg:px-8">
+      {!generating && (
+        <div className="space-y-12">
+          <div className="border-b border-gray-900/10 pb-12">
+            <label
+              id="listbox-label"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Select a language...
+            </label>
+            <select
+              value={selectedLanguage}
+              onChange={handleLanguageChange}
+              className="block w-full border border-gray-300 px-4 py-2 mt-2 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            >
+              <option value="">
+                {selectedLanguage ? selectedLanguage : "Select Language"}
+              </option>{" "}
+              {topLanguages.map((language) => (
+                <option key={language.code} value={language.name}>
+                  {language.name}
+                </option>
+              ))}
+            </select>
+            <label
+              id="listbox-label"
+              class="block text-sm font-medium leading-6 text-gray-900 pt-4"
+            >
+              And add a topic...
+            </label>
+            <textarea
+              className="resize-none border border-slate-500 w-full block my-2 px-4 py-2 rounded-sm"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              maxLength={80}
+              placeholder="Apples, Butterflies, Constellations..."
+            />
+            <button className="btn" onClick={handleClick} disabled={generating}>
+              Generate language set
+            </button>
+          </div>
+        </div>
+      )}
       {!!generating && (
         <div className="text-green-500 flex h-full animate-pulse w-full flex-col justify-center items-center">
           <FontAwesomeIcon icon={faBrain} className="text-8xl" />
           <h6>Generating...</h6>
         </div>
       )}
-      <h1>This is the language page</h1>
-      {topLanguages.map((language) => (
-        <button
-          key={language.code}
-          className={`inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 ${
-            selectedLanguage === language.name ? "bg-red-50" : ""
-          }`}
-          onClick={() => handleLanguageClick(language.name)}
-        >
-          {language.name}
-        </button>
-      ))}
-      <textarea
-        className="resize-none border border-slate-500 w-full block my-2 px-4 py-2 rounded-sm"
-        value={topic}
-        onChange={(e) => setTopic(e.target.value)}
-        maxLength={80}
-      />
-      <button className="btn m-2" onClick={handleClick}>
-        Generate language set
-      </button>
     </div>
   );
 }
