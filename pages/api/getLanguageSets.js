@@ -11,16 +11,14 @@ export default withApiAuthRequired(async function handler(req, res) {
     const userProfile = await db.collection('Users').findOne({
       auth0Id: sub,
     });
-
-    const { lastLanguageSetDate, getNewerLangaugeSets } = req.body;
-
+    const { lastLanguageSetDate, getNewerLanguageSets } = req.body;
     const languageSets = await db
-      .collection('Posts')
+      .collection('LanguageSet')
       .find({
         userId: userProfile._id,
-        created: { [getNewerLangaugeSets ? '$gt' : '$lt']: new Date(lastLanguageSetDate) },
+        created: { [getNewerLanguageSets ? '$gt' : '$lt']: new Date(lastLanguageSetDate) },
       })
-      .limit(getNewerLangaugeSets ? 0 : 5)
+      .limit(getNewerLanguageSets ? 0 : 5)
       .sort({ created: -1 })
       .toArray();
 

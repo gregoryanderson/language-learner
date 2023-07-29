@@ -9,10 +9,10 @@ function languageSetsReducer(state, action) {
   switch (action.type) {
     case 'addLanguageSet': {
       const newLanguageSet = [...state];
-      action.languageSet.forEach((post) => {
-        const exists = newLanguageSet.find((p) => p._id === post._id);
+      action.languageSet.forEach((set) => {
+        const exists = newLanguageSet.find((ls) => ls._id === set._id);
         if (!exists) {
-            newLanguageSet.push(post);
+            newLanguageSet.push(set);
         }
       });
       return newLanguageSet;
@@ -32,7 +32,7 @@ function languageSetsReducer(state, action) {
 }
 
 export const LanguageSetsProvider = ({ children }) => {
-  const [langaugeSets, dispatch] = useReducer(languageSetsReducer, []);
+  const [languageSets, dispatch] = useReducer(languageSetsReducer, []);
   const [noMoreLanguageSets, setNoMoreLanguageSets] = useState(false);
 
   const deleteLanguageSet = useCallback((languageSetId) => {
@@ -59,6 +59,7 @@ export const LanguageSetsProvider = ({ children }) => {
         body: JSON.stringify({ lastLanguageSetDate, getNewerLanguageSets }),
       });
       const json = await result.json();
+      console.log({json}, 'pqr')
       const languageSetsResult = json.languageSets || [];
       if (languageSetsResult.length < 5) {
         setNoMoreLanguageSets(true);
@@ -73,7 +74,7 @@ export const LanguageSetsProvider = ({ children }) => {
 
   return (
     <LanguageSetsContext.Provider
-      value={{ langaugeSets, setLanguageSetsFromSSR, getLanguageSets, noMoreLanguageSets, deleteLanguageSet }}
+      value={{ languageSets, setLanguageSetsFromSSR, getLanguageSets, noMoreLanguageSets, deleteLanguageSet }}
     >
       {children}
     </LanguageSetsContext.Provider>

@@ -8,6 +8,7 @@ import { ObjectId } from "mongodb";
 import { useState } from "react";
 
 export default function LanguageSet(props) {
+  console.log({props})
   const [visible, setVisible] = useState({});
 
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function LanguageSet(props) {
     }));
   };
 
-  const displayArray = props.set.map((item, index) => (
+  const displayArray = props?.set?.map((item, index) => (
     <ul className="divide-gray-100">
       <li key={index} className="px-4 py-4 sm:px-6">
         <div className="flex items-center justify-between">
@@ -72,6 +73,7 @@ export default function LanguageSet(props) {
 }
 
 LanguageSet.getLayout = function getLayout(page, pageProps) {
+  console.log({page, pageProps})
   return <AppLayout {...pageProps}>{page}</AppLayout>;
 };
 
@@ -88,11 +90,29 @@ export const getServerSideProps = withPageAuthRequired({
       _id: new ObjectId(ctx.params.languageSetId),
       userId: user._id,
     });
+    console.log({languageSet}, "xyz")
+    const userLanguageSets = await db
+    .collection('LanguageSet')
+    .find({
+      userId: user._id,
+    }).toArray()  
+    const serializedUserLanguageSets = userLanguageSets.map((set) => {
+      return {
+        ...set,
+        _id: set._id.toString(),
+        userId: set.userId.toString(),
+        created: set.created.toISOString()
+        // Convert other ObjectId fields as needed
+      };
+    });
 
+    console.log({serializedUserLanguageSets})
+  
     return {
       props: {
         id: ctx.params.languageSetId,
         set: languageSet.set,
+        userLanguageSets: serializedUserLanguageSets,
         languageSetCreated: languageSet.created.toString(),
         ...props,
       },

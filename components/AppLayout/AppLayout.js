@@ -1,41 +1,62 @@
-import { useUser } from '@auth0/nextjs-auth0/client';
-import { faCoins } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useContext, useEffect } from 'react';
-import PostsContext from '../../context/postsContext';
-import { Logo } from '../Logo';
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { faCoins } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Image from "next/image";
+import Link from "next/link";
+import { useContext, useEffect } from "react";
+import PostsContext from "../../context/postsContext";
+import LanguageSetContext from "../../context/languageSetContext";
+import { Logo } from "../Logo";
 
 export const AppLayout = ({
   children,
   availableTokens,
-  posts: postsFromSSR,
-  postId,
-  postCreated,
+  userLanguageSets: languageSetsFromSSR,
+  id: languageSetId,
+  languageSetCreated,
 }) => {
   const { user } = useUser();
 
-  const { setPostsFromSSR, posts, getPosts, noMorePosts } =
-    useContext(PostsContext);
+  const {
+    setLanguageSetsFromSSR,
+    languageSets,
+    getLanguageSets,
+    noMoreLanguageSets,
+  } = useContext(LanguageSetContext);
 
   useEffect(() => {
-    setPostsFromSSR(postsFromSSR);
-    if (postId) {
-      const exists = postsFromSSR.find((post) => post._id === postId);
-      if (!exists) {
-        getPosts({ getNewerPosts: true, lastPostDate: postCreated });
+    if (languageSetsFromSSR) {
+      setLanguageSetsFromSSR(languageSetsFromSSR);
+      console.log({languageSetsFromSSR, languageSetId})
+      if (languageSetId) {
+        console.log({languageSetId})
+        const exists = languageSetsFromSSR.find(
+          (languageSet) => languageSet._id === languageSetId
+        );
+        console.log({exists})
+        if (!exists) {
+          getLanguageSets({
+            getNewerLanguageSets: true,
+            lastLanguageSetDate: languageSetCreated,
+          });
+        }
       }
     }
-  }, [postsFromSSR, setPostsFromSSR, postId, postCreated, getPosts]);
+  }, [
+    languageSetsFromSSR,
+    setLanguageSetsFromSSR,
+    languageSetId,
+    languageSetCreated,
+    getLanguageSets,
+  ]);
 
   return (
     <div className="grid grid-cols-[300px_1fr] h-screen max-h-screen">
       <div className="flex flex-col text-white overflow-hidden">
         <div className="bg-slate-800 px-2">
           <Logo />
-          <Link href="/post/new" className="btn">
-            New post
+          <Link href="/language-set/language" className="btn">
+            New Language Set
           </Link>
           <Link href="/token-topup" className="block mt-2 text-center">
             <FontAwesomeIcon icon={faCoins} className="text-yellow-500" />
@@ -43,27 +64,32 @@ export const AppLayout = ({
           </Link>
         </div>
         <div className="px-4 flex-1 overflow-auto bg-gradient-to-b from-slate-800 to-cyan-800">
-          {posts.map((post) => (
+          {languageSetsFromSSR?.map((languageSet) => (
             <Link
-              key={post._id}
-              href={`/post/${post._id}`}
+              key={languageSet._id}
+              href={`/language-set/${languageSet._id}`}
               className={`py-1 border border-white/0 block text-ellipsis overflow-hidden whitespace-nowrap my-1 px-2 bg-white/10 cursor-pointer rounded-sm ${
-                postId === post._id ? 'bg-white/20 border-white' : ''
+                languageSetId === languageSet._id
+                  ? "bg-white/20 border-white"
+                  : ""
               }`}
             >
-              {post.topic}
+              {languageSet.topic}
             </Link>
           ))}
-          {!noMorePosts && (
+          {/* {!noMoreLanguageSets && (
             <div
               onClick={() => {
-                getPosts({ lastPostDate: posts[posts.length - 1].created });
+                getLanguageSets({
+                  lastLanguageSetDate:
+                    languageSets[languageSet.length - 1].created,
+                });
               }}
               className="hover:underline text-sm text-slate-400 text-center cursor-pointer mt-4"
             >
-              Load more posts
+              Load more sets
             </div>
-          )}
+          )} */}
         </div>
         <div className="bg-cyan-800 flex items-center gap-2 border-t border-t-black/50 h-20 px-2">
           {!!user ? (
