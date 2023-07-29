@@ -66,7 +66,7 @@ export default function Language() {
           <div className="border-b border-gray-900/10 pb-12">
             <label
               id="listbox-label"
-              class="block text-sm font-medium leading-6 text-gray-900"
+              className="block text-sm font-medium leading-6 text-gray-900"
             >
               Select a language...
             </label>
@@ -79,14 +79,14 @@ export default function Language() {
                 {selectedLanguage ? selectedLanguage : "Select Language"}
               </option>{" "}
               {topLanguages.map((language) => (
-                <option key={language.code} value={language.name}>
+                <option key={language.name} value={language.name}>
                   {language.name}
                 </option>
               ))}
             </select>
             <label
               id="listbox-label"
-              class="block text-sm font-medium leading-6 text-gray-900 pt-4"
+              className="block text-sm font-medium leading-6 text-gray-900 pt-4"
             >
               And add a topic...
             </label>

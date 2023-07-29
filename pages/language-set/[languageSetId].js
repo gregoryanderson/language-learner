@@ -21,7 +21,7 @@ export default function LanguageSet(props) {
   };
 
   const displayArray = props?.set?.map((item, index) => (
-    <ul className="divide-gray-100">
+    <ul key={index} className="divide-gray-100">
       <li key={index} className="px-4 py-4 sm:px-6">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-gray-900">
@@ -90,7 +90,6 @@ export const getServerSideProps = withPageAuthRequired({
       _id: new ObjectId(ctx.params.languageSetId),
       userId: user._id,
     });
-    console.log({languageSet}, "xyz")
     const userLanguageSets = await db
     .collection('LanguageSet')
     .find({
